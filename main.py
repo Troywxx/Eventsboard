@@ -1,42 +1,47 @@
-from flask import Flask, render_template
+#!/usr/bin/env python
+# coding=utf-8
+
+import sys
+from flask import Flask, render_template, redirect, url_for
 from config import DevConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
-from flask_wtf import Form
-from wtforms import StringField, TextAreaField
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired, Length
 import datetime 
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 bootstrap = Bootstrap()
 app = Flask(__name__)
 app.config.from_object(DevConfig)
-app.secret_key = '123456'  #KeyError: 'A secret key is required to use CSRF.'
+
 db = SQLAlchemy(app)
 bootstrap.init_app(app)
 db.init_app(app)
 
 class Mention(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    workname = db.Column(db.String(255))
-    workcontent = db.Column(db.String(255))
-    workinfo = db.Column(db.String(255))
-    workstatus = db.Column(db.String(255))
+    workname = db.Column(db.String(255))     #事件名：RWY10/28停航施工
+    workcontent = db.Column(db.String(255))  #事件内容：每周一三五日 0001-0500
+    workinfo = db.Column(db.String(255))     #事件备注：可能引起的问题
+    workstatus = db.Column(db.String(255))   #事件状态：主用/正在执行
+    worktype = db.Column(db.String(255))     #事件类别：转报机/自动化/跑道关停
     recorddate = db.Column(db.String(255))
 
-    def __init__(self, workname):
-        self.workname = workname
-
-    def __repr__(self):
-        return "<User '{}'>".format(self.workname)
     
-class CommentForm(Form):
+class CommentForm(FlaskForm):
     name = StringField(
-        'Name',
+        '事件名称',
         validators=[DataRequired(), Length(max=255)]
     )
-    text = TextAreaField(u'Comment', validators=[DataRequired()])
-    info = TextAreaField(u'Comment', validators=[DataRequired()])
-    status = TextAreaField(u'Comment', validators=[DataRequired()])
+    type = TextAreaField(u'类别', validators=[DataRequired()])
+    text = TextAreaField(u'内容', validators=[DataRequired()])
+    info = TextAreaField(u'备注', validators=[DataRequired()])
+    status = TextAreaField(u'状态', validators=[DataRequired()])
+    submit = SubmitField(u'提交')
 
 
 
@@ -64,17 +69,19 @@ def post():
     if form.validate_on_submit():
         new_post = Mention()
         new_post.workname = form.name.data
+        new_post.worktype = form.type.data
         new_post.workcontent = form.text.data
         new_post.workinfo = form.info.data
         new_post.workstatus = form.status.data
         new_post.recorddate = datetime.datetime.now()
         db.session.add(new_post)
         db.session.commit()
-    
-    return render_template(
-        'edit_work.html',
-        form=form
-    )
+        return redirect(url_for('home'))
+    else:
+        return render_template(
+            'edit_work.html',
+            form=form
+        )
 
 
 
