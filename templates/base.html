@@ -1,0 +1,66 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}业务公告板{% endblock title %}
+
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" href="{{url_for('static', filename='bootstrap.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='index.css')}}">
+{% endblock head %}
+
+{% block navbar %}  
+<div class="container">
+	<div class="header clearfix">
+	<div>
+	   <h1>业务公告板
+	   <small>
+		 <span>UTC</span><span class="text-muted" id="time_utc"></span>
+		 <span>BJT</span><span class="text-muted" id="time_bjt"></span>
+	   </small>
+	   </h1>
+	</div>
+	</div>
+
+	<div>
+		<a href="{{ url_for('home') }}" class="button button-small">主页</a>
+		<a href="{{ url_for('work') }}" class="button button-small">气象业务</a>
+		<a href="{{ url_for('relatedwork') }}" class="button button-small">关联业务</a>
+		<a href="{{ url_for('post') }}" class="button button-small">新增</a>
+	</div>
+
+	<div class="jumbotron">
+	<h1 id="date"></h1>        
+	
+
+
+</div>
+{% endblock navbar %}
+
+{% block content %}
+
+<div class="container">
+	{% block page_content %}
+	{% endblock page_content %}
+</div>
+
+{% block footer %}
+<div class="container">
+  <footer class="footer">
+	<p align="right">
+	  海南空管分局气象台设备室
+	  <br/>值班电话 : 0898-65751633
+	</p>
+  </footer>
+</div>
+{% endblock footer %}
+
+{% endblock content %}
+
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('static', filename='jquery-3.2.1.js')}}"></script>
+<script src="{{url_for('static', filename='myscript.js')}}"></script>
+{% endblock scripts %}

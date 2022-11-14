@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}公告板：新增{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>编辑日志</h1>
+</div>
+<div >
+    {{ wtf.quick_form(form) }}
+    <imput class="btn btn-primary" type="submit" value="提交">
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+{% endblock %}

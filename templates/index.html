@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Helm{% endblock title %}
+
+{% block page_content %}
+
+
+{% endblock page_content %}
+
+{% block scripts %}
+{{ moment.include_jquery() }}
+{{ moment.include_moment() }}
+{{ super() }}
+{% endblock scripts %}
