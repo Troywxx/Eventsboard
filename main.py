@@ -53,8 +53,11 @@ def home():
 
 @app.route('/work')
 def work():
+    posts = Mention.query.all()
+    print(posts[0].workname)
     return render_template(
-        'qixiangyewu.html'
+        'qixiangyewu.html',
+        posts=posts
     )
 
 @app.route('/relatedwork')
