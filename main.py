@@ -2,12 +2,14 @@
 # coding=utf-8
 
 import sys
+import json
+
 from flask import Flask, render_template, redirect, url_for
-from config import DevConfig
+from config import DevConfig, typelist, tag, alltype
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length
 import datetime 
 
@@ -29,6 +31,7 @@ class Mention(db.Model):
     workinfo = db.Column(db.String(255))     #事件备注：可能引起的问题
     workstatus = db.Column(db.String(255))   #事件状态：主用/正在执行
     worktype = db.Column(db.String(255))     #事件类别：转报机/自动化/跑道关停
+    worktag = db.Column(db.String(255))     #事件类型：气象/非气象
     recorddate = db.Column(db.String(255))
 
     
@@ -37,7 +40,8 @@ class CommentForm(FlaskForm):
         '事件名称',
         validators=[DataRequired(), Length(max=255)]
     )
-    type = TextAreaField(u'类别', validators=[DataRequired()])
+    type = SelectField(u'类别', choices=typelist, coerce=int)
+    tag = SelectField(u'类型', choices=tag, coerce=int)
     text = TextAreaField(u'内容', validators=[DataRequired()])
     info = TextAreaField(u'备注', validators=[DataRequired()])
     status = TextAreaField(u'状态', validators=[DataRequired()])
@@ -54,9 +58,24 @@ def home():
 @app.route('/work')
 def work():
     posts = Mention.query.all()
-    print(posts[0].workname)
+    postsdic = {}
+    types = []
+
+    for i in alltype:
+        print(str(i).decode("unicode-escape"))
+        types.append(str(i).decode("unicode-escape"))
+        print(types)
+
+    for i,j in zip(types, posts) :
+        print(j.worktype)
+        if i == j.worktype:
+            new_dic = {}
+            new_dic[i] = j
+            postsdic.update(new_dic)
+    print( postsdic)
     return render_template(
         'qixiangyewu.html',
+        postsdic=postsdic,
         posts=posts
     )
 
@@ -82,7 +101,7 @@ def post():
         return redirect(url_for('home'))
     else:
         return render_template(
-            'edit_work.html',
+            'u_work.html',
             form=form
         )
 
