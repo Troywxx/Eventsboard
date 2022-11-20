@@ -106,5 +106,5 @@ GitHub.sublime-settings
 .history
 
 migrations/
-/config.py
+
 /database.db
